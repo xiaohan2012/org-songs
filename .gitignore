@@ -2,3 +2,5 @@
 .ipynb_checkpoints/
 .venv/
 downloads/
+
+__pycache__
