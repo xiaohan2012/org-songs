@@ -13,7 +13,7 @@ def makedir(d, usedir=True):
 
 
 def is_downloaded(output_prefix):
-    possible_extensions = ["m4a", "webm"]
+    possible_extensions = ["m4a", "webm", "mp3"]
     for ext in possible_extensions:
         if os.path.exists(output_prefix + "." + ext):
             return True
@@ -34,25 +34,31 @@ def recurse(node, root_dir="./downloads"):
         start = node.properties.get("start")
         end = node.properties.get("end")
         needs_clip = start is not None and end is not None
+        is_clipped = node.properties.get("clipped") == "true"
+        external = node.properties.get("downloaded") == "external"
 
-        if not is_downloaded(output_prefix):
+        if not is_downloaded(output_prefix) and not external:
             Path(output_prefix).parent.mkdir(exist_ok=True, parents=True)
             pytubefix_download(url, output_prefix)
+        elif external:
+            print(f"{output_prefix} downloaded externally, skipping")
+        else:
+            print(f"{output_prefix} downloaded already")
 
-        if needs_clip:
+        if needs_clip and not external and not is_clipped:
             ext = get_extension_by_check(output_prefix)
             output_path = output_prefix + ("." + ext if ext else ".m4a")
             clip_audio(output_path, output_path, parse_time(start), parse_time(end))
             print(f"clipped to {start}-{end}")
-        else:
-            print(f"{output_prefix} downloaded already")
+        elif needs_clip and is_clipped:
+            print(f"{output_prefix} already clipped, skipping")
     for child in node.children:
         new_root_dir = os.path.join(root_dir, heading) if len(heading) > 0 else root_dir
         recurse(child, new_root_dir)
 
 
 def get_extension_by_check(output_prefix):
-    for ext in ["m4a", "webm"]:
+    for ext in ["m4a", "webm", "mp3"]:
         if os.path.exists(output_prefix + "." + ext):
             return ext
     return None
