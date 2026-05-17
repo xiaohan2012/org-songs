@@ -9,7 +9,7 @@ Songs are stored in an org file (`songs.org`) with their YouTube URLs. A Python 
 ## Usage
 
 ```bash
-python main.py
+python main.py  # downloads songs, clips by :start:/:end:, skips already downloaded/clipped
 ```
 
 ## Org File Format
