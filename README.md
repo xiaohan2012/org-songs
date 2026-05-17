@@ -1,6 +1,10 @@
 # org-songs
 
-Download YouTube audio files and clip them based on org-mode properties.
+A YouTube audio downloader using an org-mode file as the song database.
+
+## Concept
+
+Songs are stored in an org file (`songs.org`) with their YouTube URLs. A Python script crawls the org file and downloads the audio files.
 
 ## Usage
 
