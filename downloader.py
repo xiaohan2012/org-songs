@@ -56,3 +56,17 @@ def pytubefix_download(url: str, output_prefix: str):
         ys.download(output_path=output_path, filename=filename, max_retries=5)
     except pytubefix.exceptions.VideoUnavailable:
         print(f"{url} unavailable")
+
+
+def clip_audio(input_path: str, output_path: str, start_sec: float, end_sec: float):
+    import subprocess
+    import os
+    from pathlib import Path
+    ext = Path(input_path).suffix
+    temp_path = input_path + ".clip" + ext
+    subprocess.run([
+        "ffmpeg", "-y", "-i", input_path,
+        "-ss", str(start_sec), "-to", str(end_sec),
+        "-c", "copy", temp_path
+    ], check=True, capture_output=True)
+    os.replace(temp_path, output_path)
