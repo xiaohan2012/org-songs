@@ -1,61 +1,16 @@
-import os
-import urllib
-from pathlib import Path
-
-import pytubefix
-from pytube import YouTube
-from pytubefix import YouTube as YouTubeFix
-from pytubefix.cli import on_progress
+import subprocess
 
 
-def pytube_download(url: str, output_prefix: str):
-    max_tries = 5  # TODO: be a argument
-    succeeds = False
-    for n_tries in range(1, max_tries + 1):
-        try:
-            # get the mp4 with the highest quality
-            best_item = (
-                YouTube(url)
-                .streams.filter(
-                    only_audio=True,
-                    # mime_type='audio'
-                    mime_type="audio/mp4",
-                )
-                .order_by("abr")
-                .desc()
-                .first()
-            )
-            succeeds = True
-            break
-        except (ConnectionResetError, urllib.error.HTTPError):
-            print(f"trying {n_tries} time(s)")
+def yt_dlp_download(url: str, output_prefix: str):
+    """Download the best audio of the YouTube video at `url` to `output_prefix` plus its extension (.m4a preferred).
 
-    if not succeeds:
-        print(f"trying {max_tries} times still failed, skip it")
-    else:
-        output_path = output_prefix + get_extension(best_item)
-        print(f"downloading {url} to {output_path}")
-        dirname, filename = os.path.dirname(output_path), os.path.basename(output_path)
-        best_item.download(dirname, filename=filename)
-
-
-def get_extension(stream):
-    mime_type = stream.mime_type
-    if "mp4" in mime_type:
-        return ".m4a"
-    elif "webm" in mime_type:
-        return ".webm"
-
-
-def pytubefix_download(url: str, output_prefix: str):
-    try:
-        yt = YouTubeFix(url, on_progress_callback=on_progress)
-        ys = yt.streams.get_audio_only()
-        output_path = Path(output_prefix).parent
-        filename = Path(output_prefix).name + get_extension(ys)
-        ys.download(output_path=output_path, filename=filename, max_retries=5)
-    except pytubefix.exceptions.VideoUnavailable:
-        print(f"{url} unavailable")
+    Uses the yt-dlp CLI because pytubefix requests are now rejected by YouTube's bot detection.
+    """
+    result = subprocess.run(
+        ["yt-dlp", "-f", "bestaudio[ext=m4a]/bestaudio", "--no-playlist", "-o", output_prefix + ".%(ext)s", url]
+    )
+    if result.returncode != 0:
+        print(f"{url} failed to download")
 
 
 def clip_audio(input_path: str, output_path: str, start_sec: float, end_sec: float):
