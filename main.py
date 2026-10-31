@@ -1,7 +1,7 @@
 import os
 from orgparse import load
 from pathlib import Path
-from downloader import pytubefix_download, clip_audio, get_extension
+from downloader import yt_dlp_download, clip_audio
 
 def makedir(d, usedir=True):
     if usedir:
@@ -39,7 +39,7 @@ def recurse(node, root_dir="./downloads"):
 
         if not is_downloaded(output_prefix) and not external:
             Path(output_prefix).parent.mkdir(exist_ok=True, parents=True)
-            pytubefix_download(url, output_prefix)
+            yt_dlp_download(url, output_prefix)
         elif external:
             print(f"{output_prefix} downloaded externally, skipping")
         else:

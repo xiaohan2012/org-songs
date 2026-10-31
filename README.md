@@ -51,7 +51,8 @@ Nested headings create subdirectories. `*` = section/directory, `**` = song entr
 
 ## Dependencies
 
-- pytube, pytubefix, orgparse
+- orgparse
+- yt-dlp (`brew install yt-dlp`)
 - ffmpeg (for clipping)
 
 ## External Download
