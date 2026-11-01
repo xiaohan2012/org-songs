@@ -30,6 +30,8 @@ python rescue_pick.py --apply  # append the reviewed songs to songs.org
 python main.py                 # download them
 ```
 
+Re-running `rescue_pick.py` after ticking more songs appends only those to `rescue-review.org`; untick songs you delete there, or they come back.
+
 ## Org File Format
 
 ```org
