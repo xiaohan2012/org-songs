@@ -12,6 +12,26 @@ Songs are stored in an org file (`songs.org`) with their YouTube URLs. A Python 
 python main.py  # downloads songs, clips by :start:/:end:, skips already downloaded/clipped
 ```
 
+## Rescue Songs
+
+```bash
+python rescue.py  # writes rescue.org next to songs.org
+```
+
+Checklist of popular songs by the artists in `songs.org` (plus a list of same-era artists), minus songs already there, to jog memory.
+Hot songs come from NetEase Cloud Music; Jay Chou's own songs are missing there (copyright), only collaborations show.
+
+Then download the ticked songs:
+
+```bash
+python rescue_pick.py          # best YouTube match per ticked song -> rescue-review.org
+# review rescue-review.org: fix wrong URLs, delete unwanted entries
+python rescue_pick.py --apply  # append the reviewed songs to songs.org
+python main.py                 # download them
+```
+
+Re-running `rescue_pick.py` after ticking more songs appends only those to `rescue-review.org`; untick songs you delete there, or they come back.
+
 ## Org File Format
 
 ```org
